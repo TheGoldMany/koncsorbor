@@ -43,8 +43,14 @@ export async function POST(req: NextRequest) {
   const key = `termekek/${Date.now()}-${Math.random().toString(36).slice(2, 8)}.${ext}`;
 
   try {
-    const blob = await put(key, file, { access: "public", contentType: file.type });
-    return NextResponse.json({ url: blob.url });
+    // A store privát, ezért privátként töltünk fel, és a /api/blob proxyn
+    // keresztül szolgáljuk ki nyilvánosan (lásd app/api/blob/[...path]).
+    const blob = await put(key, file, {
+      access: "private",
+      contentType: file.type,
+      addRandomSuffix: false,
+    });
+    return NextResponse.json({ url: `/api/blob/${blob.pathname}` });
   } catch (e) {
     console.error("Blob upload failed", e);
     return NextResponse.json({ error: "A feltöltés nem sikerült. Próbáld újra." }, { status: 500 });
