@@ -1,8 +1,20 @@
 import { getAllSettings } from "@/lib/settings";
 import { isSimplePayConfigured } from "@/lib/simplepay";
 import { isEmailConfigured } from "@/lib/email";
-import { PageHeader } from "@/components/admin/ui";
+import { PageHeader, SectionTitle } from "@/components/admin/ui";
 import { saveSettings } from "@/lib/admin-actions";
+
+function Status({ ok, okLabel = "Beállítva" }: { ok: boolean; okLabel?: string }) {
+  return ok ? (
+    <span className="inline-flex items-center gap-1.5 rounded-full bg-emerald-50 px-2.5 py-0.5 text-xs font-medium text-emerald-700 ring-1 ring-inset ring-emerald-600/20">
+      <span className="h-1.5 w-1.5 rounded-full bg-emerald-500" /> {okLabel}
+    </span>
+  ) : (
+    <span className="inline-flex items-center gap-1.5 rounded-full bg-amber-50 px-2.5 py-0.5 text-xs font-medium text-amber-700 ring-1 ring-inset ring-amber-600/20">
+      <span className="h-1.5 w-1.5 rounded-full bg-amber-500" /> Nincs beállítva
+    </span>
+  );
+}
 
 export const dynamic = "force-dynamic";
 
@@ -24,7 +36,7 @@ export default async function SettingsPage() {
       <div className="grid gap-6 lg:grid-cols-2">
         {/* Company / invoice settings */}
         <form action={saveSettings} className="card space-y-4 p-6">
-          <h2 className="text-lg font-semibold text-leather-900">Cég- és számlázási adatok</h2>
+          <SectionTitle icon="invoices">Cég- és számlázási adatok</SectionTitle>
           <Field name="company_name" label="Cégnév" defaultValue={s.company_name} />
           <Field name="company_address" label="Cím" defaultValue={s.company_address} />
           <div className="grid grid-cols-2 gap-4">
@@ -45,14 +57,10 @@ export default async function SettingsPage() {
         {/* Integrations status */}
         <div className="space-y-6">
           <div className="card p-6">
-            <h2 className="text-lg font-semibold text-leather-900">SimplePay fizetés</h2>
-            <p className="mt-2 flex items-center gap-2 text-sm">
-              Állapot:
-              {isSimplePayConfigured() ? (
-                <span className="badge bg-green-100 text-green-800">Beállítva {sandbox ? "(SANDBOX)" : "(ÉLES)"}</span>
-              ) : (
-                <span className="badge bg-amber-100 text-amber-800">Nincs beállítva</span>
-              )}
+            <SectionTitle icon="revenue">SimplePay fizetés</SectionTitle>
+            <p className="flex items-center gap-2 text-sm text-leather-600">
+              Állapot:{" "}
+              {isSimplePayConfigured() ? <Status ok okLabel={`Beállítva ${sandbox ? "(SANDBOX)" : "(ÉLES)"}`} /> : <Status ok={false} />}
             </p>
             <p className="mt-3 text-sm text-leather-600">
               A SimplePay kulcsokat környezeti változókban kell megadni a biztonság érdekében:
@@ -68,14 +76,9 @@ export default async function SettingsPage() {
           </div>
 
           <div className="card p-6">
-            <h2 className="text-lg font-semibold text-leather-900">E-mail értesítések</h2>
-            <p className="mt-2 flex items-center gap-2 text-sm">
-              Állapot:
-              {isEmailConfigured() ? (
-                <span className="badge bg-green-100 text-green-800">Beállítva</span>
-              ) : (
-                <span className="badge bg-amber-100 text-amber-800">Nincs beállítva</span>
-              )}
+            <SectionTitle icon="customers">E-mail értesítések</SectionTitle>
+            <p className="flex items-center gap-2 text-sm text-leather-600">
+              Állapot: {isEmailConfigured() ? <Status ok /> : <Status ok={false} />}
             </p>
             <p className="mt-3 text-sm text-leather-600">SMTP beállítások környezeti változókban:</p>
             <ul className="mt-2 space-y-1 text-sm text-leather-700">

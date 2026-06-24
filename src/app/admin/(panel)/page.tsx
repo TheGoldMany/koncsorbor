@@ -32,10 +32,10 @@ export default async function AdminDashboard() {
       <PageHeader title="Áttekintés" subtitle="A webáruház aktuális állapota." />
 
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-        <StatCard label="Bevétel (fizetett)" value={formatHuf(revenue._sum.total ?? 0)} />
-        <StatCard label="Rendelések" value={`${orderCount} (${paidOrders} fizetve)`} href="/admin/rendelesek" />
-        <StatCard label="Termékek" value={String(productCount)} href="/admin/termekek" />
-        <StatCard label="Ügyfelek" value={String(customerCount)} href="/admin/ugyfelek" />
+        <StatCard icon="revenue" label="Bevétel (fizetett)" value={formatHuf(revenue._sum.total ?? 0)} />
+        <StatCard icon="orders" label="Rendelések" value={`${orderCount} (${paidOrders} fizetve)`} href="/admin/rendelesek" />
+        <StatCard icon="products" label="Termékek" value={String(productCount)} href="/admin/termekek" />
+        <StatCard icon="customers" label="Ügyfelek" value={String(customerCount)} href="/admin/ugyfelek" />
       </div>
 
       <div className="mt-8 grid gap-6 lg:grid-cols-3">

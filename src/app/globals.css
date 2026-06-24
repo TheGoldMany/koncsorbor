@@ -17,6 +17,9 @@
   h1, h2, h3, h4 {
     @apply font-serif;
   }
+  code {
+    @apply rounded-md bg-leather-100 px-1.5 py-0.5 font-mono text-[0.8em] font-medium text-leather-800;
+  }
 }
 
 @layer components {
@@ -24,7 +27,7 @@
     @apply mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8;
   }
   .btn {
-    @apply inline-flex items-center justify-center gap-2 rounded-md px-5 py-2.5 text-sm font-semibold transition-colors disabled:cursor-not-allowed disabled:opacity-60;
+    @apply inline-flex items-center justify-center gap-2 rounded-lg px-5 py-2.5 text-sm font-semibold transition-colors disabled:cursor-not-allowed disabled:opacity-60;
   }
   .btn-primary {
     @apply btn bg-leather-700 text-cream hover:bg-leather-800;
@@ -36,13 +39,13 @@
     @apply btn text-leather-800 hover:bg-leather-100;
   }
   .input {
-    @apply w-full rounded-md border border-leather-300 bg-white px-3 py-2 text-sm text-charcoal shadow-sm outline-none focus:border-leather-600 focus:ring-1 focus:ring-leather-600;
+    @apply w-full rounded-lg border border-leather-300 bg-white px-3.5 py-2.5 text-sm text-charcoal shadow-sm outline-none transition-shadow placeholder:text-leather-400 focus:border-leather-600 focus:ring-2 focus:ring-leather-600/30;
   }
   .label {
-    @apply mb-1 block text-sm font-medium text-leather-800;
+    @apply mb-1.5 block text-sm font-medium text-leather-800;
   }
   .card {
-    @apply rounded-xl border border-leather-200 bg-white shadow-sm;
+    @apply rounded-2xl border border-leather-200/70 bg-white shadow-sm;
   }
   .badge {
     @apply inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium;
