@@ -1,6 +1,7 @@
 import { prisma } from "@/lib/db";
 import { PageHeader, Table, Th, Td } from "@/components/admin/ui";
 import { saveCategory, deleteCategory } from "@/lib/admin-actions";
+import { ImageUploadField } from "@/components/admin/ImageUploadField";
 
 export const dynamic = "force-dynamic";
 
@@ -34,7 +35,7 @@ export default async function CategoriesPage() {
                         <input name="name" defaultValue={c.name} className="input !py-1" />
                         <input name="slug" defaultValue={c.slug} className="input !py-1" />
                         <input name="description" defaultValue={c.description ?? ""} placeholder="Leírás" className="input !py-1" />
-                        <input name="image" defaultValue={c.image ?? ""} placeholder="Kép URL" className="input !py-1" />
+                        <ImageUploadField name="image" defaultValue={c.image} />
                         <input name="position" type="number" defaultValue={c.position} className="input !py-1 w-24" />
                         <div className="flex gap-2">
                           <button className="btn-primary !py-1">Mentés</button>
@@ -61,7 +62,7 @@ export default async function CategoriesPage() {
               <div><label className="label">Név *</label><input name="name" required className="input" /></div>
               <div><label className="label">Slug</label><input name="slug" className="input" placeholder="auto a névből" /></div>
               <div><label className="label">Leírás</label><textarea name="description" rows={2} className="input" /></div>
-              <div><label className="label">Kép URL</label><input name="image" className="input" /></div>
+              <div><label className="label">Kép</label><ImageUploadField name="image" /></div>
               <div><label className="label">Sorrend</label><input name="position" type="number" defaultValue={0} className="input w-24" /></div>
               <button className="btn-primary w-full">Létrehozás</button>
             </form>
