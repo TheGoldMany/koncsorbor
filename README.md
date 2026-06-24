@@ -36,11 +36,17 @@ Stack: **Next.js 15** (App Router) · TypeScript · Tailwind CSS · Prisma · SQ
 
 ---
 
+## Adatbázis
+
+Az alkalmazás **PostgreSQL**-t használ (Prisma ORM). Helyi fejlesztéshez és éles
+üzemhez egyaránt egy Postgres adatbázis `DATABASE_URL` kapcsolati sztringje kell
+(pl. Vercel/Neon Postgres, Supabase, vagy helyi Postgres).
+
 ## Telepítés (helyi fejlesztés)
 
 ```bash
 npm install
-cp .env.example .env        # töltsd ki az értékeket
+cp .env.example .env        # töltsd ki az értékeket (DATABASE_URL kötelező)
 npm run db:setup            # séma létrehozása + kezdeti adatok (admin, termékek)
 npm run dev                 # http://localhost:3000
 ```
@@ -87,15 +93,24 @@ Alapértelmezett admin belépés (a `.env`-ből, `npm run db:setup` után):
 
 ---
 
-## Éles üzem / deploy
+## Éles üzem / deploy (Vercel + Neon Postgres)
 
-A projekt Vercelre kész. **Figyelem:** a SQLite a Vercel szerver nélküli
-környezetében nem perzisztens. Éles üzemhez állíts be egy menedzselt
-PostgreSQL/MySQL adatbázist:
+A projekt Vercelre kész, és a deploy **zéró kézi lépéssel** működik:
 
-1. A `prisma/schema.prisma`-ban a `datasource db` `provider`-ét állítsd
-   `postgresql`-re (vagy `mysql`-re), és add meg a `DATABASE_URL`-t.
-2. Futtasd: `npx prisma db push` majd `npm run db:seed`.
+1. **Adatbázis létrehozása:** a Vercel projekt **Storage** fülén hozz létre egy
+   **Neon Postgres** adatbázist, és kösd a projekthez. Ez automatikusan beállítja a
+   `DATABASE_URL` környezeti változót minden környezetben (Production/Preview).
+2. **Környezeti változók:** a Vercel projekt **Settings → Environment Variables**
+   alatt add meg legalább az `AUTH_SECRET` és `NEXT_PUBLIC_SITE_URL` értékeket
+   (valamint a SimplePay/SMTP kulcsokat, ha élesíted azokat). Lásd a táblázatot lent.
+3. **Deploy:** a build során automatikusan lefut a `prisma db push` (táblák
+   létrehozása) és a `prisma/seed.ts` (kategóriák, termékek, induló admin fiók),
+   majd a `next build`. A seed **additív**: nem írja felül az adminban végzett
+   módosításokat, biztonságosan fut minden deploykor.
+
+> A seed így zéró kézi lépéssel feltölti a kezdeti adatokat. Ha a Neon *pooled*
+> kapcsolaton a `prisma db push` hibázna, állíts be egy `DATABASE_URL`-t a
+> *direct* (non-pooling) végpontra a buildhez.
 
 A termékképeket töltsd a `public/uploads/` mappába, és add meg az elérési utat az
 admin termékszerkesztőben (pl. `/uploads/nyakorv.jpg`), vagy használj külső URL-t /

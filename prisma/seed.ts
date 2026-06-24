@@ -1,6 +1,14 @@
 import { PrismaClient } from "@prisma/client";
 import bcrypt from "bcryptjs";
 
+// Load .env locally (Node 20.12+/22). On Vercel the env vars are already in
+// process.env and there is no .env file, so we ignore the error.
+try {
+  (process as NodeJS.Process & { loadEnvFile?: (p?: string) => void }).loadEnvFile?.();
+} catch {
+  /* no .env file — using process.env */
+}
+
 const prisma = new PrismaClient();
 
 async function main() {
@@ -71,9 +79,10 @@ async function main() {
   ];
   const catMap: Record<string, string> = {};
   for (const c of categories) {
+    // Purely additive: don't overwrite edits made later in the admin.
     const cat = await prisma.category.upsert({
       where: { slug: c.slug },
-      update: { name: c.name, description: c.description, position: c.position },
+      update: {},
       create: c,
     });
     catMap[c.slug] = cat.id;
@@ -186,15 +195,8 @@ async function main() {
   for (const p of products) {
     const created = await prisma.product.upsert({
       where: { slug: p.slug },
-      update: {
-        name: p.name,
-        description: p.description,
-        details: p.details,
-        basePrice: p.basePrice,
-        featured: p.featured ?? false,
-        categoryId: catMap[p.category],
-        active: true,
-      },
+      // Purely additive: don't overwrite edits made later in the admin.
+      update: {},
       create: {
         slug: p.slug,
         name: p.name,
