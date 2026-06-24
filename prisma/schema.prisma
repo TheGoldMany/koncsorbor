@@ -1,0 +1,148 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  name      String
+  password  String
+  role      String   @default("admin") // admin | staff
+  createdAt DateTime @default(now())
+}
+
+model Category {
+  id          String    @id @default(cuid())
+  slug        String    @unique
+  name        String
+  description String?
+  image       String?
+  position    Int       @default(0)
+  products    Product[]
+}
+
+model Product {
+  id          String           @id @default(cuid())
+  slug        String           @unique
+  name        String
+  description String
+  details     String? // longer markdown-ish text
+  basePrice   Int // HUF, gross
+  active      Boolean          @default(true)
+  featured    Boolean          @default(false)
+  categoryId  String
+  category    Category         @relation(fields: [categoryId], references: [id])
+  images      ProductImage[]
+  variants    ProductVariant[]
+  createdAt   DateTime         @default(now())
+  updatedAt   DateTime         @updatedAt
+}
+
+model ProductImage {
+  id        String  @id @default(cuid())
+  url       String
+  alt       String?
+  position  Int     @default(0)
+  productId String
+  product   Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+}
+
+model ProductVariant {
+  id         String      @id @default(cuid())
+  sku        String      @unique
+  name       String // e.g. "2,5 cm / Fekete"
+  priceDiff  Int         @default(0) // added to basePrice
+  stock      Int         @default(0)
+  productId  String
+  product    Product     @relation(fields: [productId], references: [id], onDelete: Cascade)
+  orderItems OrderItem[]
+}
+
+model Customer {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  name      String
+  phone     String?
+  createdAt DateTime @default(now())
+  orders    Order[]
+}
+
+model Order {
+  id              String      @id @default(cuid())
+  orderNumber     String      @unique
+  customerId      String
+  customer        Customer    @relation(fields: [customerId], references: [id])
+  status          String      @default("pending") // pending | paid | processing | shipped | completed | cancelled
+  paymentStatus   String      @default("unpaid") // unpaid | paid | failed | refunded
+  paymentMethod   String      @default("simplepay")
+  paymentRef      String? // SimplePay transactionId
+  subtotal        Int
+  shippingFee     Int         @default(0)
+  total           Int
+  // shipping/billing
+  shippingName    String
+  shippingPhone   String
+  shippingZip     String
+  shippingCity    String
+  shippingAddress String
+  billingName     String?
+  billingTaxId    String?
+  billingZip      String?
+  billingCity     String?
+  billingAddress  String?
+  shippingMethod  String
+  note            String?
+  items           OrderItem[]
+  invoice         Invoice?
+  createdAt       DateTime    @default(now())
+  updatedAt       DateTime    @updatedAt
+}
+
+model OrderItem {
+  id          String          @id @default(cuid())
+  orderId     String
+  order       Order           @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  variantId   String?
+  variant     ProductVariant? @relation(fields: [variantId], references: [id])
+  productName String
+  variantName String
+  unitPrice   Int
+  quantity    Int
+  lineTotal   Int
+}
+
+model Invoice {
+  id        String   @id @default(cuid())
+  number    String   @unique
+  orderId   String   @unique
+  order     Order    @relation(fields: [orderId], references: [id])
+  issuedAt  DateTime @default(now())
+  dueAt     DateTime
+  netAmount Int
+  vatAmount Int
+  vatRate   Int      @default(27)
+  total     Int
+  buyerName String
+  buyerAddr String
+  buyerTax  String?
+  html      String // rendered invoice snapshot
+}
+
+model ShippingMethod {
+  id       String  @id @default(cuid())
+  name     String
+  fee      Int
+  active   Boolean @default(true)
+  position Int     @default(0)
+  note     String?
+}
+
+model Setting {
+  key   String @id
+  value String
+}
