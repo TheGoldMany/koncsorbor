@@ -7,8 +7,15 @@ import { useCart } from "./CartProvider";
 import { formatHuf } from "@/lib/money";
 
 type ShippingMethod = { id: string; name: string; fee: number; note: string | null };
+type DefaultCustomer = { name: string; email: string; phone: string } | null;
 
-export function CheckoutForm({ shippingMethods }: { shippingMethods: ShippingMethod[] }) {
+export function CheckoutForm({
+  shippingMethods,
+  defaultCustomer,
+}: {
+  shippingMethods: ShippingMethod[];
+  defaultCustomer?: DefaultCustomer;
+}) {
   const { items, subtotal, clear, ready } = useCart();
   const router = useRouter();
   const [shippingId, setShippingId] = useState(shippingMethods[0]?.id ?? "");
@@ -93,15 +100,15 @@ export function CheckoutForm({ shippingMethods }: { shippingMethods: ShippingMet
           <div className="mt-4 grid gap-4 sm:grid-cols-2">
             <div className="sm:col-span-2">
               <label className="label">Teljes név *</label>
-              <input name="name" required className="input" autoComplete="name" />
+              <input name="name" required defaultValue={defaultCustomer?.name} className="input" autoComplete="name" />
             </div>
             <div>
               <label className="label">E-mail *</label>
-              <input name="email" type="email" required className="input" autoComplete="email" />
+              <input name="email" type="email" required defaultValue={defaultCustomer?.email} className="input" autoComplete="email" />
             </div>
             <div>
               <label className="label">Telefonszám *</label>
-              <input name="phone" required className="input" autoComplete="tel" />
+              <input name="phone" required defaultValue={defaultCustomer?.phone} className="input" autoComplete="tel" />
             </div>
           </div>
         </section>

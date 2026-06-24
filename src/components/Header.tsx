@@ -14,7 +14,7 @@ const nav = [
   { href: "/kapcsolat", label: "Kapcsolat" },
 ];
 
-export function Header() {
+export function Header({ customer }: { customer?: { name: string } | null }) {
   const { count } = useCart();
   const [open, setOpen] = useState(false);
 
@@ -38,6 +38,18 @@ export function Header() {
         </nav>
 
         <div className="flex items-center gap-2">
+          <Link
+            href={customer ? "/fiok" : "/fiok/bejelentkezes"}
+            className="btn-ghost hidden sm:inline-flex"
+            aria-label={customer ? "Fiókom" : "Bejelentkezés"}
+            title={customer ? "Fiókom" : "Bejelentkezés"}
+          >
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+              <circle cx="12" cy="8" r="4" />
+              <path d="M4 21c0-4 4-6 8-6s8 2 8 6" strokeLinecap="round" />
+            </svg>
+            <span className="text-sm font-medium">{customer ? customer.name.split(" ")[0] : "Belépés"}</span>
+          </Link>
           <Link href="/kosar" className="relative btn-ghost" aria-label="Kosár">
             <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
               <path d="M6 6h15l-1.5 9h-12z" strokeLinejoin="round" />
@@ -75,6 +87,13 @@ export function Header() {
                 {n.label}
               </Link>
             ))}
+            <Link
+              href={customer ? "/fiok" : "/fiok/bejelentkezes"}
+              onClick={() => setOpen(false)}
+              className="border-t border-leather-200 py-2.5 text-sm font-semibold text-leather-900"
+            >
+              {customer ? `Fiókom (${customer.name.split(" ")[0]})` : "Bejelentkezés / Regisztráció"}
+            </Link>
           </div>
         </nav>
       )}

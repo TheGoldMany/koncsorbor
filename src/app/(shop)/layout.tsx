@@ -1,10 +1,14 @@
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
+import { getCustomerSession } from "@/lib/customer-auth";
 
-export default function ShopLayout({ children }: { children: React.ReactNode }) {
+export const dynamic = "force-dynamic";
+
+export default async function ShopLayout({ children }: { children: React.ReactNode }) {
+  const session = await getCustomerSession();
   return (
     <div className="flex min-h-screen flex-col">
-      <Header />
+      <Header customer={session ? { name: session.name } : null} />
       <main className="flex-1">{children}</main>
       <Footer />
     </div>

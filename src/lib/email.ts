@@ -120,6 +120,26 @@ export async function sendAdminNotification(d: OrderEmailData): Promise<boolean>
   return sendEmail({ to, subject: `Új rendelés – ${d.orderNumber}`, html: shell("Új rendelés", inner) });
 }
 
+export async function sendPasswordReset(to: string, name: string, resetUrl: string): Promise<boolean> {
+  const inner = `
+    <p>Kedves ${name}!</p>
+    <p>Jelszó-visszaállítást kértél a Koncsor Bőrkereskedés fiókodhoz. Kattints az alábbi gombra az új jelszó megadásához:</p>
+    <p style="margin:24px 0"><a href="${resetUrl}" style="background:#6f462c;color:#f7f1e6;padding:12px 24px;border-radius:6px;text-decoration:none;font-weight:bold">Új jelszó beállítása</a></p>
+    <p style="font-size:13px;color:#8c5a33">Ha nem te kérted, hagyd figyelmen kívül ezt az e-mailt. A link 1 órán át érvényes.</p>
+    <p style="font-size:12px;color:#8c5a33;word-break:break-all">${resetUrl}</p>
+  `;
+  return sendEmail({ to, subject: "Jelszó visszaállítása – Koncsor Bőrkereskedés", html: shell("Jelszó visszaállítása", inner) });
+}
+
+export async function sendWelcome(to: string, name: string): Promise<boolean> {
+  const inner = `
+    <p>Kedves ${name}!</p>
+    <p>Köszönjük, hogy regisztráltál a Koncsor Bőrkereskedés webáruházába! Mostantól nyomon követheted a rendeléseidet és gyorsabban tudsz vásárolni.</p>
+    <p>Jó böngészést kívánunk kézműves bőrtermékeink között!</p>
+  `;
+  return sendEmail({ to, subject: "Üdvözlünk a Koncsor Bőrkereskedésnél!", html: shell("Sikeres regisztráció", inner) });
+}
+
 export async function sendStatusUpdate(to: string, orderNumber: string, customerName: string, statusLabel: string): Promise<boolean> {
   const inner = `
     <p>Kedves ${customerName}!</p>

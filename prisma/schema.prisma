@@ -65,12 +65,16 @@ model ProductVariant {
 }
 
 model Customer {
-  id        String   @id @default(cuid())
-  email     String   @unique
-  name      String
-  phone     String?
-  createdAt DateTime @default(now())
-  orders    Order[]
+  id            String    @id @default(cuid())
+  email         String    @unique
+  name          String
+  phone         String?
+  password      String? // null = guest (created from an order, no login)
+  resetToken    String?   @unique
+  resetTokenExp DateTime?
+  deletedAt     DateTime? // soft-deleted / anonymized account
+  createdAt     DateTime  @default(now())
+  orders        Order[]
 }
 
 model Order {
